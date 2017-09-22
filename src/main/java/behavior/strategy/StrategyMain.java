@@ -1,48 +1,24 @@
 package behavior.strategy;
 
+import behavior.strategy.validation.ValidationStrategyEnum;
+import behavior.strategy.validation.Validator;
+import lombok.extern.slf4j.Slf4j;
 
+import static behavior.strategy.validation.ValidationStrategyEnum.*;
+
+@Slf4j
 public class StrategyMain {
 
     public static void main(String[] args) {
-        // old school
-        Validator v1 = new Validator(new IsNumeric());
-        System.out.println(v1.validate("aaaa"));
-        Validator v2 = new Validator(new IsAllLowerCase());
-        System.out.println(v2.validate("bbbb"));
-
-
-        // with lambdas
-        Validator v3 = new Validator((String s) -> s.matches("\\d+"));
-        System.out.println(v3.validate("aaaa"));
-        Validator v4 = new Validator((String s) -> s.matches("[a-z]+"));
-        System.out.println(v4.validate("bbbb"));
-    }
-
-    interface ValidationStrategy {
-        boolean execute(String s);
-    }
-
-    static private class IsAllLowerCase implements ValidationStrategy {
-        public boolean execute(String s) {
-            return s.matches("[a-z]+");
+        log.info("Strategy : ");
+        for (ValidationStrategyEnum strategyEnum : ValidationStrategyEnum.values()) {
+            log.info(strategyEnum.info());
         }
-    }
+        log.info("\n");
 
-    static private class IsNumeric implements ValidationStrategy {
-        public boolean execute(String s) {
-            return s.matches("\\d+");
-        }
-    }
-
-    static private class Validator {
-        private final ValidationStrategy strategy;
-
-        public Validator(ValidationStrategy v) {
-            this.strategy = v;
-        }
-
-        public boolean validate(String s) {
-            return strategy.execute(s);
-        }
+        Validator v = new Validator(IS_ALL_LOWERCASE.strategy());
+        log.info("CLASS isNumeric : " + v.validate("aaaa"));
+        v = new Validator(IS_ALL_LOWERCASE.strategy());
+        log.info("CLASS IsAllLowerCase : " + v.validate("bbbb"));
     }
 }
